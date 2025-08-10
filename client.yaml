@@ -1,0 +1,6 @@
+server: "127.0.0.1:51828"
+psk: "secret"
+interface: "xiu0"
+routes:
+  - "10.0.0.0/24"
+metrics_addr: ":9091"

@@ -1,0 +1,4 @@
+listen: ":51828"
+psk: "secret"
+ip_pool: "10.0.0.0/24"
+metrics_addr: ":9090"
