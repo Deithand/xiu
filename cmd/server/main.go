@@ -65,5 +65,4 @@ type session struct {
 	addr     *net.UDPAddr
 	key      []byte
 	lastSeen time.Time
-	counter  uint64
 }

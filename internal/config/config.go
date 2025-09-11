@@ -1,7 +1,7 @@
 package config
 
 import (
-	"io/ioutil"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -24,7 +24,7 @@ type Client struct {
 }
 
 func LoadServer(path string) (*Server, error) {
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func LoadServer(path string) (*Server, error) {
 }
 
 func LoadClient(path string) (*Client, error) {
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

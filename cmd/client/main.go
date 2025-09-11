@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("tun")
 	}
-	_ = iface
+	_ = iface // TODO configure interface
 	addr, err := net.ResolveUDPAddr("udp", cfg.Server)
 	if err != nil {
 		log.Fatal().Err(err).Msg("server addr")
@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("udp")
 	}
-	key, err := handshake(conn, addr, []byte(cfg.PSK))
+	_, err = handshake(conn, addr, []byte(cfg.PSK))
 	if err != nil {
 		log.Fatal().Err(err).Msg("handshake")
 	}
@@ -56,13 +56,13 @@ func main() {
 			continue
 		}
 		if pkt.Type == wire.TypeRekey {
-			key, err = handshake(conn, addr, []byte(cfg.PSK))
+			_, err = handshake(conn, addr, []byte(cfg.PSK))
 			if err != nil {
 				log.Error().Err(err).Msg("rehandshake")
 			} else {
 				log.Info().Msg("rekeyed")
 			}
-			_ = key
+			// key not used yet, reserved for future encryption
 		}
 	}
 }
