@@ -24,23 +24,28 @@ type KeyPair struct {
 
 // GenerateKeyPair creates new key pair using crypto/rand.
 func GenerateKeyPair() (*KeyPair, error) {
-	var priv, pub [KeySize]byte
+	var priv [KeySize]byte
 	if _, err := rand.Read(priv[:]); err != nil {
 		return nil, err
 	}
-	curve25519.ScalarBaseMult(&pub, &priv)
+	pubBytes, err := curve25519.X25519(priv[:], curve25519.Basepoint)
+	if err != nil {
+		return nil, err
+	}
+	var pub [KeySize]byte
+	copy(pub[:], pubBytes)
 	return &KeyPair{Public: pub, Private: priv}, nil
 }
 
 // DeriveShared derives shared key using ECDH X25519 and HKDF-SHA256 with PSK salt.
 func DeriveShared(priv, peerPub, psk []byte) ([]byte, error) {
-	var privArr, pubArr [KeySize]byte
-	copy(privArr[:], priv)
-	copy(pubArr[:], peerPub)
-	var shared [KeySize]byte
-	curve25519.ScalarMult(&shared, &privArr, &pubArr)
+	// Use X25519 to derive the raw shared secret
+	shared, err := curve25519.X25519(priv, peerPub)
+	if err != nil {
+		return nil, err
+	}
 	var info []byte
-	kdf := hkdf.New(sha256.New, shared[:], psk, info)
+	kdf := hkdf.New(sha256.New, shared, psk, info)
 	key := make([]byte, KeySize)
 	if _, err := kdf.Read(key); err != nil {
 		return nil, err
